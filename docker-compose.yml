@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  rehaex.devserver: 
+    image: node:12.18
+    restart: always
+    ports:
+      - "4000:3000"
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    command: npm start
+    stdin_open: true
