@@ -3,12 +3,21 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import {Auth0Provider} from '@auth0/auth0-react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <Auth0Provider
+    domain="rifan-dev.au.auth0.com"
+    clientId="3KIs0enh1PZGPb3SHQEyjXvZUkwQav9K"
+    redirectUri={process.env.REACT_APP_BASE_URL + '/dashboard'}
+  >
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+    ,
+  </Auth0Provider>,
+  document.getElementById('root'),
 );
 
 // If you want your app to work offline and load faster, you can change

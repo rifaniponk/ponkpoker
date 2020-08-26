@@ -1,0 +1,11 @@
+{
+    // Set the default
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
+    // Enable per-language
+    // "[jsx]": {
+    //   "editor.formatOnSave": true
+    // }
+  }
