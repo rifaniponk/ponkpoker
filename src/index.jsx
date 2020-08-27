@@ -11,11 +11,9 @@ ReactDOM.render(
     domain="rifan-dev.au.auth0.com"
     clientId="3KIs0enh1PZGPb3SHQEyjXvZUkwQav9K"
     redirectUri={process.env.REACT_APP_BASE_URL + '/dashboard'}
+    scope="read:current_user update:current_user_metadata"
   >
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-    ,
+    <App />
   </Auth0Provider>,
   document.getElementById('root'),
 );
