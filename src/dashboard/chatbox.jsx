@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, {useEffect} from 'react';
 import {Row, Col, Form, Input, FormGroup, Spinner} from 'reactstrap';
 import {gql, useSubscription, useMutation} from '@apollo/client';
@@ -40,8 +41,26 @@ mutation insert_messages_one($message: String = "", $user_id: String = "") {
 }
 `;
 
+const TYPING_USER_SUBSCRIPTION = gql`
+subscription {
+  users(where: {typing: {_eq: true}}) {
+    name
+  }
+}
+`;
+
+const UPDATE_USER_TYPING = gql`
+mutation update_users($typing: Boolean, $id: String) {
+  update_users(_set: {typing: $typing}, where: {id: {_eq: $id}}) {
+    affected_rows
+  }
+}
+`;
+
 const ChatBox = () => {
   const {user} = useAuth0();
+  let timeout = 0; // typing timeout
+  let typing = false;
 
   // eslint-disable-next-line camelcase
   const {loading, data} = useSubscription(
@@ -52,8 +71,12 @@ const ChatBox = () => {
     MESSAGES_SUBSCRIPTION
   );
 
-  // eslint-disable-next-line camelcase
+  const {data: datatyping} = useSubscription(
+    TYPING_USER_SUBSCRIPTION
+  );
+
   const [insert_messages_one, {loading: msgLoading}] = useMutation(INSERT_MESSAGE);
+  const [update_users] = useMutation(UPDATE_USER_TYPING);
 
   const {register, handleSubmit} = useForm();
 
@@ -70,6 +93,24 @@ const ChatBox = () => {
     }
   };
 
+  const doTyping = () => {
+    if (timeout){
+      clearTimeout(timeout);
+    }
+    if (! typing){
+      typing = true;
+      update_users({
+        variables: {typing: typing, id: user.sub},
+      });
+    }
+    timeout = setTimeout(() => {
+      typing = false;
+      update_users({
+        variables: {typing: typing, id: user.sub},
+      });
+    }, 1000);
+  };
+
   useEffect(() => {
     setTimeout(() => {
       const cb = document.getElementById("chatbox");
@@ -83,6 +124,7 @@ const ChatBox = () => {
     return <Spinner color="primary"></Spinner>;
   }
 
+  const typingUsers = datatyping ? datatyping.users.map(u => u.name) : [];
   return (
       <Row style={{marginTop: '50px'}}>
         <Col sm="4">
@@ -99,7 +141,11 @@ const ChatBox = () => {
         </Col>
         <Col sm="8">
           <div>
-            <h5>group chat</h5>
+            <h5>Group Chat
+              {typingUsers.length > 0 &&
+                <small style={{marginLeft: '10px'}}><i>{typingUsers.join(', ')} is typing...</i></small>
+              }
+            </h5>
             <hr />
             {datamsg &&
               <div style={{height: '400px', overflowY: 'auto'}} id="chatbox">
@@ -116,6 +162,7 @@ const ChatBox = () => {
             <Form onSubmit={handleSubmit(onSubmit)}>
               <FormGroup>
                 <Input type="message" name="message" id="examplemessage" placeholder="enter your message here..."
+                  onChange={() => doTyping()}
                   disabled={msgLoading}
                   innerRef={register({required: true})}
                 />
