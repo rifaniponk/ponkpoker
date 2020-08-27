@@ -14,6 +14,7 @@ import {
 import {useAuth0} from "@auth0/auth0-react";
 import {gql, useMutation} from '@apollo/client';
 import moment from 'moment';
+import LogoutButton from '../components/logout-button';
 
 const UPDATE_LAST_SEEN = gql`
 mutation update_users($id: String, $last_seen: timestamptz) {
@@ -51,6 +52,7 @@ const Example = (props) => {
             </NavItem>
           </Nav>
           <NavbarText>{isAuthenticated ? user.name : (isLoading ? 'fetching user....' : 'unauthenticated')}</NavbarText>
+          <LogoutButton></LogoutButton>
         </Collapse>
       </Navbar>
     </div>

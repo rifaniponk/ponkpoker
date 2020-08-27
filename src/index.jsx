@@ -10,7 +10,7 @@ ReactDOM.render(
   <Auth0Provider
     domain="rifan-dev.au.auth0.com"
     clientId="3KIs0enh1PZGPb3SHQEyjXvZUkwQav9K"
-    redirectUri={process.env.REACT_APP_BASE_URL + '/dashboard'}
+    redirectUri={process.env.REACT_APP_BASE_URL}
     scope="read:current_user update:current_user_metadata"
   >
     <App />

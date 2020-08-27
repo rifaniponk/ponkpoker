@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col, Form, Input, FormGroup, Spinner} from 'reactstrap';
-import {gql, useSubscription, useQuery, useMutation} from '@apollo/client';
+import {gql, useSubscription, useMutation} from '@apollo/client';
 import {useForm} from "react-hook-form";
 import {useAuth0} from "@auth0/auth0-react";
 import seedColor from 'seed-color';
@@ -42,11 +42,11 @@ const ChatBox = () => {
   const {user} = useAuth0();
 
   // eslint-disable-next-line camelcase
-  const {loading, error, data} = useSubscription(
+  const {loading, data} = useSubscription(
     ONLINE_USER_SUBSCRIPTION
   );
 
-  const {loading: mloading, error: merror, data: datamsg} = useSubscription(
+  const {data: datamsg} = useSubscription(
     MESSAGES_SUBSCRIPTION
   );
 
@@ -59,6 +59,7 @@ const ChatBox = () => {
       await insert_messages_one({
         variables: {...values, user_id: user.sub},
       });
+      document.getElementById('examplemessage').value = '';
     } catch (err){
       // eslint-disable-next-line no-console
       console.error('error ', err);

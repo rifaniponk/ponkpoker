@@ -14,7 +14,7 @@ import {useAuth0} from "@auth0/auth0-react";
 import {Spinner} from 'reactstrap';
 
 function App(){
-  const {getIdTokenClaims} = useAuth0();
+  const {getIdTokenClaims, isLoading, isAuthenticated} = useAuth0();
   const [token, setToken] = useState('');
 
   getIdTokenClaims().then((a) => {
@@ -22,6 +22,17 @@ function App(){
       setToken(a.__raw);
     }
   });
+
+  if (! isAuthenticated && ! isLoading){
+    return (
+        <div className="App">
+          <header className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+            <LoginButton></LoginButton>
+          </header>
+        </div>
+    );
+  }
 
   if (token === ""){
     return <Spinner color="primary" />;
@@ -79,14 +90,8 @@ function App(){
       <div className="App">
         <Router>
           <Switch>
-            <Route path="/dashboard">
-              <Dashboard />
-            </Route>
             <Route path="/">
-              <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <LoginButton></LoginButton>
-              </header>
+              <Dashboard />
             </Route>
           </Switch>
         </Router>
