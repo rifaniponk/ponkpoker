@@ -8,7 +8,7 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink,
+  // NavLink,
   NavbarText,
 } from 'reactstrap';
 import {useAuth0} from "@auth0/auth0-react";
@@ -48,10 +48,10 @@ const Example = (props) => {
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
             <NavItem>
-              <NavLink href="/components/">...</NavLink>
+              {/* <NavLink href="/components/">...</NavLink> */}
             </NavItem>
           </Nav>
-          <NavbarText>{isAuthenticated ? user.name : (isLoading ? 'fetching user....' : 'unauthenticated')}</NavbarText>
+          <NavbarText style={{marginRight: '10px'}}>{isAuthenticated ? user.name : (isLoading ? 'fetching user....' : 'unauthenticated')}</NavbarText>
           <LogoutButton></LogoutButton>
         </Collapse>
       </Navbar>

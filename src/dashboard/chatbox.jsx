@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Row, Col, Form, Input, FormGroup, Spinner} from 'reactstrap';
 import {gql, useSubscription, useMutation} from '@apollo/client';
 import {useForm} from "react-hook-form";
 import {useAuth0} from "@auth0/auth0-react";
 import seedColor from 'seed-color';
+import AvatarImg from '../components/avatar';
 
 const ONLINE_USER_SUBSCRIPTION = gql`
 subscription {
@@ -11,6 +12,7 @@ subscription {
     id
     last_seen
     user {
+      id
       name
     }
   }
@@ -50,6 +52,7 @@ const ChatBox = () => {
     MESSAGES_SUBSCRIPTION
   );
 
+  // eslint-disable-next-line camelcase
   const [insert_messages_one, {loading: msgLoading}] = useMutation(INSERT_MESSAGE);
 
   const {register, handleSubmit} = useForm();
@@ -60,11 +63,21 @@ const ChatBox = () => {
         variables: {...values, user_id: user.sub},
       });
       document.getElementById('examplemessage').value = '';
+      document.getElementById('examplemessage').focus();
     } catch (err){
       // eslint-disable-next-line no-console
       console.error('error ', err);
     }
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      const cb = document.getElementById("chatbox");
+      if (cb){
+        cb.scrollTop = cb.scrollHeight;
+      }
+    }, 200);
+  }, [datamsg]);
 
   if (loading){
     return <Spinner color="primary"></Spinner>;
@@ -75,10 +88,11 @@ const ChatBox = () => {
         <Col sm="4">
           <h5>Online users</h5>
           <hr />
-          <ul>
+          <ul style={{paddingLeft: 0}}>
             {data.online_users.map(u =>
-              <li key={u.id}>
-                {u.user.name}
+              <li key={u.id} style={{listStyle: 'none', color: seedColor(u.user.id).toHex(), marginBottom: '10px'}}>
+                <AvatarImg id={u.user.id} size={40}></AvatarImg>
+                <b style={{marginLeft: '10px'}}>{u.user.name}</b>
               </li>
             )}
           </ul>
@@ -88,9 +102,9 @@ const ChatBox = () => {
             <h5>group chat</h5>
             <hr />
             {datamsg &&
-              <div style={{maxHeight: '400px', overflowY: 'auto'}}>
+              <div style={{height: '400px', overflowY: 'auto'}} id="chatbox">
                 {datamsg.messages.map(m =>
-                  <div key={m.id} style={{display: 'block', marginBottom: '20px', color: seedColor(m.user.id).toHex()}}>
+                  <div key={m.id} style={{display: 'block', marginBottom: '10px', color: seedColor(m.user.id).toHex()}}>
                     <b>{m.user.name}</b>
                     <span style={{marginLeft: '30px'}}>{m.message}</span>
                   </div>
