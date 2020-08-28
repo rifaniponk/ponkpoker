@@ -8,13 +8,14 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  // NavLink,
+  NavLink,
   NavbarText,
 } from 'reactstrap';
 import {useAuth0} from "@auth0/auth0-react";
 import {gql, useMutation} from '@apollo/client';
 import moment from 'moment';
 import LogoutButton from '../components/logout-button';
+import {Link} from "react-router-dom";
 
 const UPDATE_LAST_SEEN = gql`
 mutation update_users($id: String, $last_seen: timestamptz) {
@@ -43,12 +44,12 @@ const Example = (props) => {
   return (
     <div>
       <Navbar color="light" light expand="md">
-        <NavbarBrand href="/">simple app</NavbarBrand>
+        <NavbarBrand to="/" tag={Link}>simple app</NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
             <NavItem>
-              {/* <NavLink href="/components/">...</NavLink> */}
+              <NavLink to="/planning-poker" tag={Link}>Planning Poker</NavLink>
             </NavItem>
           </Nav>
           <NavbarText style={{marginRight: '10px'}}>{isAuthenticated ? user.name : (isLoading ? 'fetching user....' : 'unauthenticated')}</NavbarText>

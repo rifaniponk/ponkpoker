@@ -11,7 +11,9 @@ import {WebSocketLink} from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {setContext} from '@apollo/client/link/context';
 import {useAuth0} from "@auth0/auth0-react";
-import {Spinner} from 'reactstrap';
+import {Container, Row, Col, Spinner} from 'reactstrap';
+import Navbar from './dashboard/navbar';
+import PlanningPoker from './planning-poker';
 
 function App(){
   const {getIdTokenClaims, isLoading, isAuthenticated} = useAuth0();
@@ -89,11 +91,19 @@ function App(){
     <ApolloProvider client={client}>
       <div className="App">
         <Router>
-          <Switch>
-            <Route path="/">
-              <Dashboard />
-            </Route>
-          </Switch>
+          <Container style={{maxWidth: '1600px'}}>
+            <Row>
+              <Col><Navbar></Navbar></Col>
+            </Row>
+            <Switch>
+              <Route path="/planning-poker">
+                <PlanningPoker />
+              </Route>
+              <Route path="/">
+                <Dashboard />
+              </Route>
+            </Switch>
+          </Container>
         </Router>
       </div>
     </ApolloProvider>
