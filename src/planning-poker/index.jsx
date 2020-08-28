@@ -11,7 +11,7 @@ import {
 import {gql, useMutation, useSubscription} from '@apollo/client';
 import {useAuth0} from "@auth0/auth0-react";
 import {useForm} from "react-hook-form";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import seedColor from 'seed-color';
 
 const INSERT_SESSION = gql`
@@ -32,8 +32,9 @@ subscription {
 `;
 
 const PlanningPoker = () => {
+  const history = useHistory();
   const {user} = useAuth0();
-  const [insert_sessions_one, {loading}] = useMutation(INSERT_SESSION);
+  const [insert_sessions_one, {loading, data: newses}] = useMutation(INSERT_SESSION);
   const {data, loading: dataloading} = useSubscription(GET_SESSIONS);
   const {register, handleSubmit} = useForm();
 
@@ -43,6 +44,13 @@ const PlanningPoker = () => {
         variables: {...values, user_id: user.sub},
       });
       document.getElementById('name').value = '';
+      setTimeout(() => {
+        if (newses && newses.insert_sessions_one && newses.insert_sessions_one.id){
+          history.push('/planning-poker/' + newses.insert_sessions_one.id);
+        } else if (data && data.sessions && data.sessions[0]){
+          history.push('/planning-poker/' + data.sessions[0].id);
+        }
+      }, 2000);
     } catch (err){
       // eslint-disable-next-line no-console
       console.error('error ', err);

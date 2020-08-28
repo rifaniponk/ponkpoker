@@ -14,6 +14,7 @@ import {useAuth0} from "@auth0/auth0-react";
 import {Container, Row, Col, Spinner} from 'reactstrap';
 import Navbar from './dashboard/navbar';
 import PlanningPoker from './planning-poker';
+import PokerDetail from './planning-poker/details';
 
 function App(){
   const {getIdTokenClaims, isLoading, isAuthenticated} = useAuth0();
@@ -96,6 +97,9 @@ function App(){
               <Col><Navbar></Navbar></Col>
             </Row>
             <Switch>
+              <Route path="/planning-poker/:id">
+                <PokerDetail />
+              </Route>
               <Route path="/planning-poker">
                 <PlanningPoker />
               </Route>
