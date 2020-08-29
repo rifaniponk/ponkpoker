@@ -5,8 +5,13 @@
 ### start dev env
 
 ```
+./npm.sh npm install
 docker-compose up
 ```
+
+### access local app
+
+[http://localhost:4000](http://localhost:4000)
 
 ### build assets for staging
 

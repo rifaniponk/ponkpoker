@@ -6,16 +6,24 @@ import './App.css';
 import LoginButton from './landing/login-button';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import Dashboard from './dashboard';
-import {ApolloClient, InMemoryCache, ApolloProvider, split, HttpLink, ApolloLink} from '@apollo/client';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  split,
+  HttpLink,
+  ApolloLink,
+} from '@apollo/client';
 import {WebSocketLink} from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {setContext} from '@apollo/client/link/context';
-import {useAuth0} from "@auth0/auth0-react";
-import {Container, Row, Col, Spinner} from 'reactstrap';
+import {useAuth0} from '@auth0/auth0-react';
+import {Container, Row, Col} from 'reactstrap';
 import Navbar from './dashboard/navbar';
 import PlanningPoker from './planning-poker';
 import PokerDetail from './planning-poker/details';
-import {onError} from "@apollo/client/link/error";
+import {onError} from '@apollo/client/link/error';
+import LoadingScreen from './components/loading-screen';
 
 function App(){
   const {getIdTokenClaims, isLoading, isAuthenticated} = useAuth0();
@@ -29,17 +37,17 @@ function App(){
 
   if (! isAuthenticated && ! isLoading){
     return (
-        <div className="App">
-          <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <LoginButton></LoginButton>
-          </header>
-        </div>
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <LoginButton></LoginButton>
+        </header>
+      </div>
     );
   }
 
-  if (token === ""){
-    return <Spinner color="primary" />;
+  if (token === ''){
+    return <LoadingScreen></LoadingScreen>;
   }
 
   const wsLink = new WebSocketLink({
@@ -74,17 +82,14 @@ function App(){
   const splitLink = split(
     ({query}) => {
       const definition = getMainDefinition(query);
-      return (
-        definition.kind === 'OperationDefinition' &&
-        definition.operation === 'subscription'
-      );
+      return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
     },
     wsLink,
     httpLink,
   );
 
   const errlink = onError(({response, operation}) => {
-    if (operation.operationName === "isp"){
+    if (operation.operationName === 'isp'){
       response.errors = null;
     }
   });
@@ -101,7 +106,9 @@ function App(){
         <Router>
           <Container style={{maxWidth: '1600px'}}>
             <Row>
-              <Col><Navbar></Navbar></Col>
+              <Col>
+                <Navbar></Navbar>
+              </Col>
             </Row>
             <Switch>
               <Route path="/planning-poker/:id">
