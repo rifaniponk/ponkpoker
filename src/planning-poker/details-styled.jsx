@@ -2,21 +2,21 @@ import styled from 'styled-components';
 
 export const SetDiv = styled.div`
   display: inline-block;
-  width: 120px;
-  height: 200px;
+  width: 160px;
+  height: 250px;
   margin-right: 30px;
+  margin-bottom: 30px;
   --borderWidth: 10px;
   background: #fff;
   position: relative;
   border-radius: var(--borderWidth);
-  border: solid #000;
+  background: linear-gradient(60deg, #56D9D3, #94DCFB, #9494FB);
+  animation: animatedgradient 5s ease infinite;
+  background-size: 300% 300%;
 
   &:hover {
     cursor: pointer;
     border: unset;
-    background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
-    animation: animatedgradient 5s ease infinite;
-    background-size: 300% 300%;
   }
 
   @keyframes animatedgradient {
@@ -29,5 +29,14 @@ export const SetDiv = styled.div`
     100% {
       background-position: 0% 50%;
     }
+  }
+
+  h1 {
+    margin-top: 85px;
+    text-align: center;
+  }
+
+  &.hvr-shutter-in-vertical:before {
+    border-radius: var(--borderWidth);
   }
 `;

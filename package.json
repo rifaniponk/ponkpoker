@@ -12,6 +12,7 @@
     "color-hash": "^1.0.3",
     "env-cmd": "^10.1.0",
     "graphql": "^15.3.0",
+    "hover.css": "^2.3.2",
     "moment": "^2.27.0",
     "node-fetch": "^2.6.0",
     "react": "^16.13.1",

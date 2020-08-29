@@ -101,7 +101,11 @@ const PokerDetail = () => {
         <Row>
           <Col>
             {valueSets.map((v, idx) =>
-              <SetDiv key={idx}>{v}</SetDiv>
+              <SetDiv key={idx} className="hvr-shutter-in-vertical">
+                <h1>
+                  {v}
+                </h1>
+              </SetDiv>
             )}
           </Col>
         </Row>

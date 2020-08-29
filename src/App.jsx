@@ -15,6 +15,7 @@ import {Container, Row, Col, Spinner} from 'reactstrap';
 import Navbar from './dashboard/navbar';
 import PlanningPoker from './planning-poker';
 import PokerDetail from './planning-poker/details';
+import {onError} from "@apollo/client/link/error";
 
 function App(){
   const {getIdTokenClaims, isLoading, isAuthenticated} = useAuth0();
@@ -82,10 +83,16 @@ function App(){
     httpLink,
   );
 
+  const errlink = onError(({response, operation}) => {
+    if (operation.operationName === "isp"){
+      response.errors = null;
+    }
+  });
+
   const client = new ApolloClient({
     // uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
     cache: new InMemoryCache(),
-    link: ApolloLink.from([authLink, splitLink]),
+    link: ApolloLink.from([errlink, authLink, splitLink]),
   });
 
   return (

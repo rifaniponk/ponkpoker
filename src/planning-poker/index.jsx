@@ -82,7 +82,7 @@ const PlanningPoker = () => {
           {dataloading && <Spinner></Spinner>}
           {data && data.sessions.map(s =>
             <Link key={s.id} to={'/planning-poker/' + s.id}
-              className="btn btn-lg d-inline-block mr-2 mb-1 btn-warning"
+              className="btn btn-lg d-inline-block mr-2 mb-1 hvr-shutter-in-horizontal"
               style={{backgroundColor: seedColor(s.id).toHex()}}
               >
               {s.name}
