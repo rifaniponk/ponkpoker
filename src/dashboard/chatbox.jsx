@@ -67,7 +67,7 @@ const ChatBox = () => {
     ONLINE_USER_SUBSCRIPTION
   );
 
-  const {data: datamsg} = useSubscription(
+  const {data: datamsg, loading: loadingmsg} = useSubscription(
     MESSAGES_SUBSCRIPTION
   );
 
@@ -120,18 +120,15 @@ const ChatBox = () => {
     }, 200);
   }, [datamsg]);
 
-  if (loading){
-    return <Spinner color="primary"></Spinner>;
-  }
-
   const typingUsers = datatyping ? datatyping.users.map(u => u.name) : [];
   return (
       <Row style={{marginTop: '50px'}}>
         <Col sm="4">
           <h5>Online users</h5>
           <hr />
+          {loading && <Spinner></Spinner>}
           <ul style={{paddingLeft: 0}}>
-            {data.online_users.map(u =>
+            {data && data.online_users.map(u =>
               <li key={u.id} style={{listStyle: 'none', color: seedColor(u.user.id).toHex(), marginBottom: '10px'}}>
                 <AvatarImg id={u.user.id} size={40}></AvatarImg>
                 <b style={{marginLeft: '10px'}}>{u.user.name}</b>
@@ -147,6 +144,7 @@ const ChatBox = () => {
               }
             </h5>
             <hr />
+            {loadingmsg && <Spinner></Spinner>}
             {datamsg &&
               <div style={{height: '400px', overflowY: 'auto'}} id="chatbox">
                 {datamsg.messages.map(m =>
