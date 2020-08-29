@@ -40,3 +40,30 @@ export const SetDiv = styled.div`
     border-radius: var(--borderWidth);
   }
 `;
+
+export const ParticipantList = styled.div`
+  list-style: none;
+  margin-bottom: 10px;
+  padding: 7px;
+
+  &.voted {
+    background: linear-gradient(60deg, #56D9D3, #94DCFB, #9494FB);
+    animation: animatedgradient 5s ease infinite;
+    background-size: 300% 300%;
+    b {
+      color: #fff;
+    }
+  }
+
+  @keyframes animatedgradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+`;

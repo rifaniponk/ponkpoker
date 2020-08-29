@@ -5,7 +5,7 @@ import {gql, useSubscription, useMutation} from '@apollo/client';
 import seedColor from 'seed-color';
 import AvatarImg from '../components/avatar';
 import {useAuth0} from "@auth0/auth0-react";
-import {SetDiv} from './details-styled';
+import {SetDiv, ParticipantList} from './details-styled';
 
 const GET_SESSION_PARTICIPANTS = gql`
 subscription session_details($id: uuid!) {
@@ -16,6 +16,7 @@ subscription session_details($id: uuid!) {
         id
       }
     }
+    user_id
     name
     is_finished
   }
@@ -73,10 +74,13 @@ const PokerDetail = () => {
         <ul style={{paddingLeft: 0}}>
           {lodu && <Spinner></Spinner>}
           {dpar && dpar.sessions_by_pk.sessions_participants.map(su =>
-            <li key={su.user.id} style={{listStyle: 'none', color: seedColor(su.user.id).toHex(), marginBottom: '10px'}}>
-              <AvatarImg id={su.user.id} size={40}></AvatarImg>
-              <b style={{marginLeft: '10px'}}>{su.user.name}</b>
-            </li>
+            <ParticipantList key={su.user.id} style={{color: seedColor(su.user.id).toHex()}} className="voted">
+              <AvatarImg id={su.user.id} size={50}></AvatarImg>
+              <b style={{marginLeft: '10px', fontSize: '20px'}}>{su.user.name}</b>
+              {user && su.user.id === dpar.sessions_by_pk.user_id &&
+                <img src="/jedi.png" alt="jedi" width="50px" className="float-right" title="jedi" />
+              }
+            </ParticipantList>
           )}
         </ul>
       </Col>
