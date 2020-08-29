@@ -118,9 +118,8 @@ const PokerDetail = () => {
           <Col>You can use keyboard shortcut&nbsp;
             <Shortcut className="d-inline-block">1</Shortcut> /&nbsp;
             <Shortcut className="d-inline-block">2</Shortcut> /&nbsp;
-            <Shortcut className="d-inline-block">3</Shortcut> /&nbsp;
-            <Shortcut className="d-inline-block">4</Shortcut> /&nbsp;
-            <Shortcut className="d-inline-block">5</Shortcut> &nbsp;
+              ...&nbsp;/&nbsp;
+            <Shortcut className="d-inline-block"><i>n</i></Shortcut> &nbsp;
             to select the card <b>in secret</b>
           </Col>
         </Row>
