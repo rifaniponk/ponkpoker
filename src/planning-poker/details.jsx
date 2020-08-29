@@ -5,7 +5,7 @@ import {gql, useSubscription, useMutation} from '@apollo/client';
 import seedColor from 'seed-color';
 import AvatarImg from '../components/avatar';
 import {useAuth0} from "@auth0/auth0-react";
-import {SetDiv, ParticipantList} from './details-styled';
+import {SetDiv, ParticipantList, Shortcut} from './details-styled';
 
 const GET_SESSION_PARTICIPANTS = gql`
 subscription session_details($id: uuid!) {
@@ -41,7 +41,7 @@ const PokerDetail = () => {
     {variables: {id}}
   );
   const [isp] = useMutation(INSERT_SES_PAR);
-  const [valueSets, setValueSets] = useState([1, 2, 3, 4, 5, 8]);
+  const [valueSets, setValueSets] = useState([1, 2, 3, 5, 8]);
 
   let found = false;
   if (dpar && dpar.sessions_by_pk){
@@ -92,7 +92,7 @@ const PokerDetail = () => {
             <Form>
               <FormGroup>
               <Input type="select" name="select" id="exampleSelect" onChange={changeSet}>
-                <option value={[1, 2, 3, 4, 5, 8]}>1, 2, 3, 5, 8</option>
+                <option value={[1, 2, 3, 5, 8]}>1, 2, 3, 5, 8</option>
                 <option value={[4, 8, 12, 16, 24, 40]}>4h, 8h, 12h, 16h, 24h, 40h</option>
               </Input>
               </FormGroup>
@@ -109,8 +109,19 @@ const PokerDetail = () => {
                 <h1>
                   {v}
                 </h1>
+                <Shortcut className="shortcut">{idx + 1}</Shortcut>
               </SetDiv>
             )}
+          </Col>
+        </Row>
+        <Row className="mt-4">
+          <Col>You can use keyboard shortcut&nbsp;
+            <Shortcut className="d-inline-block">1</Shortcut> /&nbsp;
+            <Shortcut className="d-inline-block">2</Shortcut> /&nbsp;
+            <Shortcut className="d-inline-block">3</Shortcut> /&nbsp;
+            <Shortcut className="d-inline-block">4</Shortcut> /&nbsp;
+            <Shortcut className="d-inline-block">5</Shortcut> &nbsp;
+            to select the card <b>in secret</b>
           </Col>
         </Row>
       </Col>

@@ -14,9 +14,19 @@ export const SetDiv = styled.div`
   animation: animatedgradient 5s ease infinite;
   background-size: 300% 300%;
 
+  .shortcut {
+    margin-top: 70px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   &:hover {
     cursor: pointer;
     border: unset;
+
+    .shortcut {
+      display: none;
+    }
   }
 
   @keyframes animatedgradient {
@@ -45,6 +55,7 @@ export const ParticipantList = styled.div`
   list-style: none;
   margin-bottom: 10px;
   padding: 7px;
+  transform: all 0.5s;
 
   &.voted {
     background: linear-gradient(60deg, #56D9D3, #94DCFB, #9494FB);
@@ -66,4 +77,14 @@ export const ParticipantList = styled.div`
       background-position: 0% 50%;
     }
   }
+`;
+
+export const Shortcut = styled.div`
+  font-family: Raleway;
+  width: 25px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.1em 0.5em;
+  box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
+  background-color: #f7f7f7;
 `;
