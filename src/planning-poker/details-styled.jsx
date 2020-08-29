@@ -20,13 +20,22 @@ export const SetDiv = styled.div`
     margin-right: auto;
   }
 
-  &:hover {
+  &:hover, &.selected {
     cursor: pointer;
     border: unset;
 
     .shortcut {
-      display: none;
+      background: none;
+      box-shadow: unset;
+      color: #fff;
+      opacity: 0.8;
+      border: 1px solid rgba(255, 255, 2555, .5);
     }
+  }
+
+  &.selected {
+    cursor: none;
+    color: #fff;
   }
 
   @keyframes animatedgradient {

@@ -42,6 +42,7 @@ const PokerDetail = () => {
   );
   const [isp] = useMutation(INSERT_SES_PAR);
   const [valueSets, setValueSets] = useState([1, 2, 3, 5, 8]);
+  const [selectedValueIdx, setSelectedValueIdx] = useState(-1);
 
   let found = false;
   if (dpar && dpar.sessions_by_pk){
@@ -87,25 +88,27 @@ const PokerDetail = () => {
       <Col>
         <h4>Session: {dpar && dpar.sessions_by_pk.name}</h4><hr />
         {/* <Button color="light">New</Button> */}
-        <Row>
-          <Col>
-            <Form>
-              <FormGroup>
-              <Input type="select" name="select" id="exampleSelect" onChange={changeSet}>
-                <option value={[1, 2, 3, 5, 8]}>1, 2, 3, 5, 8</option>
-                <option value={[4, 8, 12, 16, 24, 40]}>4h, 8h, 12h, 16h, 24h, 40h</option>
-              </Input>
-              </FormGroup>
-            </Form>
-          </Col>
-          <Col>
-            <Button color="success" className="float-right">Reveal!!!</Button>
-          </Col>
-        </Row>
+        {user && dpar && user.sub === dpar.sessions_by_pk.user_id &&
+          <Row>
+            <Col>
+              <Form>
+                <FormGroup>
+                <Input type="select" name="select" id="exampleSelect" onChange={changeSet}>
+                  <option value={[1, 2, 3, 5, 8]}>1, 2, 3, 5, 8</option>
+                  <option value={[4, 8, 12, 16, 24, 40]}>4h, 8h, 12h, 16h, 24h, 40h</option>
+                </Input>
+                </FormGroup>
+              </Form>
+            </Col>
+            <Col>
+              <Button color="success" className="float-right">Reveal!!!</Button>
+            </Col>
+          </Row>
+        }
         <Row>
           <Col>
             {valueSets.map((v, idx) =>
-              <SetDiv key={idx} className="hvr-shutter-in-vertical">
+              <SetDiv key={idx} className={(selectedValueIdx !== idx ? 'hvr-shutter-in-vertical' : 'selected')} onClick={()=> setSelectedValueIdx(idx)}>
                 <h1>
                   {v}
                 </h1>
