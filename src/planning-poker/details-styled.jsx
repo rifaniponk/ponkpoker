@@ -88,6 +88,18 @@ export const ParticipantList = styled.div`
   }
 `;
 
+export const SetDivRevealed = styled.div`
+  display: inline-block;
+  width: 160px;
+  height: 250px;
+  margin-right: 30px;
+  margin-bottom: 30px;
+  --borderWidth: 10px;
+  position: relative;
+  background: #777;
+  border-radius: var(--borderWidth);
+`;
+
 export const Shortcut = styled.div`
   font-family: Raleway;
   width: 25px;

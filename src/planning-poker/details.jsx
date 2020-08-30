@@ -5,7 +5,7 @@ import {gql, useSubscription, useMutation} from '@apollo/client';
 import seedColor from 'seed-color';
 import AvatarImg from '../components/avatar';
 import {useAuth0} from "@auth0/auth0-react";
-import {SetDiv, ParticipantList, Shortcut} from './details-styled';
+import {SetDiv, ParticipantList, Shortcut, SetDivRevealed} from './details-styled';
 import _ from 'lodash';
 
 const GET_SESSION_PARTICIPANTS = gql`
@@ -40,10 +40,29 @@ mutation setValue($value: Int, $sid: uuid = "", $user_id: String = "") {
 }
 `;
 
+const RESET_VALUE = gql`
+mutation resetValues($sid: uuid = "") {
+  update_sessions_participants(_set: {value: 0}, where: {session_id: {_eq: $sid}}) {
+    affected_rows
+  }
+}
+`;
+
 const GET_USER_SELECTED = gql`
-subscription getUserSelected($id: uuid!) {
-  sessions_participants(where: {value: {_neq: 0}}) {
+subscription getUserSelected($id: uuid) {
+  sessions_participants(where: {value: {_neq: 0}, session_id: {_eq: $id}}) {
     user_id
+  }
+}
+`;
+
+const REVEAL = gql`
+mutation reveal($id: uuid! = "") {
+  update_sessions_by_pk(_set: {is_finished: true}, pk_columns: {id: $id}) {
+    sessions_participants {
+      value
+      user_id
+    }
   }
 }
 `;
@@ -61,8 +80,12 @@ const PokerDetail = () => {
   );
   const [isp] = useMutation(INSERT_SES_PAR);
   const [setValue] = useMutation(SET_VALUE);
+  const [resetValues] = useMutation(RESET_VALUE);
+  const [reveal, {data: dataReveal}] = useMutation(REVEAL);
   const [valueSets, setValueSets] = useState([1, 2, 3, 5, 8]);
   const [selectedValueIdx, setSelectedValueIdx] = useState(-1);
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [isRevealing, setIsRevealing] = useState(false);
 
   let found = false;
   if (dpar && dpar.sessions_by_pk){
@@ -100,6 +123,20 @@ const PokerDetail = () => {
     }
     return false;
   };
+  console.log("dseluser ", dseluser);
+
+  const onReveal = () => {
+    reveal({variables: {id}}).then(()=>{});
+  };
+
+  if (dataReveal && dataReveal.update_sessions_by_pk){
+    if (! isRevealing){
+      setIsRevealing(true);
+      setTimeout(() => {
+        setIsRevealed(true);
+      }, 2000);
+    }
+  }
 
   return (
     <Row className="mt-4">
@@ -135,20 +172,31 @@ const PokerDetail = () => {
               </Form>
             </Col>
             <Col>
-              <Button color="success" className="float-right">Reveal!!!</Button>
+              <Button color="success" className="float-right" onClick={onReveal}>Reveal!!!</Button>
             </Col>
           </Row>
         }
         <Row>
           <Col>
-            {valueSets.map((v, idx) =>
-              <SetDiv key={idx} className={(selectedValueIdx !== idx ? 'hvr-shutter-in-vertical' : 'selected')} onClick={()=> selectCard(idx)}>
-                <h1>
-                  {v}
-                </h1>
-                <Shortcut className="shortcut">{idx + 1}</Shortcut>
-              </SetDiv>
-            )}
+            {valueSets.map((v, idx) =>{
+              if (! isRevealed){
+                return (
+                  <SetDiv key={idx} className={(selectedValueIdx !== idx ? 'hvr-shutter-in-vertical' : 'selected')} onClick={()=> selectCard(idx)}>
+                    <h1>
+                      {v}
+                    </h1>
+                    <Shortcut className="shortcut">{idx + 1}</Shortcut>
+                  </SetDiv>
+                );
+              }
+              return (
+                <SetDivRevealed key={idx}>
+                  <h1>
+                    {v}
+                  </h1>
+                </SetDivRevealed>
+              );
+            })}
           </Col>
         </Row>
         <Row className="mt-4">
