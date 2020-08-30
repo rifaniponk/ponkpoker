@@ -6,6 +6,7 @@ import seedColor from 'seed-color';
 import AvatarImg from '../components/avatar';
 import {useAuth0} from "@auth0/auth0-react";
 import {SetDiv, ParticipantList, Shortcut} from './details-styled';
+import _ from 'lodash';
 
 const GET_SESSION_PARTICIPANTS = gql`
 subscription session_details($id: uuid!) {
@@ -31,7 +32,21 @@ mutation isp($session_id: uuid = "", $user_id: String = "") {
 }
 `;
 
+const SET_VALUE = gql`
+mutation setValue($value: Int, $sid: uuid = "", $user_id: String = "") {
+  update_sessions_participants(_set: {value: $value}, where: {session_id: {_eq: $sid}, user_id: {_eq: $user_id}}) {
+    affected_rows
+  }
+}
+`;
 
+const GET_USER_SELECTED = gql`
+subscription getUserSelected($id: uuid!) {
+  sessions_participants(where: {value: {_neq: 0}}) {
+    user_id
+  }
+}
+`;
 
 const PokerDetail = () => {
   const {id} = useParams();
@@ -40,7 +55,12 @@ const PokerDetail = () => {
     GET_SESSION_PARTICIPANTS,
     {variables: {id}}
   );
+  const {data: dseluser} = useSubscription(
+    GET_USER_SELECTED,
+    {variables: {id}}
+  );
   const [isp] = useMutation(INSERT_SES_PAR);
+  const [setValue] = useMutation(SET_VALUE);
   const [valueSets, setValueSets] = useState([1, 2, 3, 5, 8]);
   const [selectedValueIdx, setSelectedValueIdx] = useState(-1);
 
@@ -67,6 +87,20 @@ const PokerDetail = () => {
     setValueSets(event.target.value.split(','));
   };
 
+  const selectCard = (idx) => {
+    setSelectedValueIdx(idx);
+    setValue({variables: {sid: id, value: valueSets[idx], user_id: user.sub}}).then(()=>{});
+  };
+
+  const isUserSelected = (userId) => {
+    if (dseluser && user){
+      if (_.find(dseluser.sessions_participants, {user_id: userId})){
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
     <Row className="mt-4">
       <Col sm="6" md="4" lg="3">
@@ -75,7 +109,7 @@ const PokerDetail = () => {
         <ul style={{paddingLeft: 0}}>
           {lodu && <Spinner></Spinner>}
           {dpar && dpar.sessions_by_pk.sessions_participants.map(su =>
-            <ParticipantList key={su.user.id} style={{color: seedColor(su.user.id).toHex()}} className="voted">
+            <ParticipantList key={su.user.id} style={{color: seedColor(su.user.id).toHex()}} className={isUserSelected(su.user.id) ? 'voted' : ''}>
               <AvatarImg id={su.user.id} size={50}></AvatarImg>
               <b style={{marginLeft: '10px', fontSize: '20px'}}>{su.user.name}</b>
               {user && su.user.id === dpar.sessions_by_pk.user_id &&
@@ -108,7 +142,7 @@ const PokerDetail = () => {
         <Row>
           <Col>
             {valueSets.map((v, idx) =>
-              <SetDiv key={idx} className={(selectedValueIdx !== idx ? 'hvr-shutter-in-vertical' : 'selected')} onClick={()=> setSelectedValueIdx(idx)}>
+              <SetDiv key={idx} className={(selectedValueIdx !== idx ? 'hvr-shutter-in-vertical' : 'selected')} onClick={()=> selectCard(idx)}>
                 <h1>
                   {v}
                 </h1>

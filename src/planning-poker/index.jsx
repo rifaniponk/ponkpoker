@@ -44,18 +44,15 @@ const PlanningPoker = () => {
         variables: {...values, user_id: user.sub},
       });
       document.getElementById('name').value = '';
-      setTimeout(() => {
-        if (newses && newses.insert_sessions_one && newses.insert_sessions_one.id){
-          history.push('/planning-poker/' + newses.insert_sessions_one.id);
-        } else if (data && data.sessions && data.sessions[0]){
-          history.push('/planning-poker/' + data.sessions[0].id);
-        }
-      }, 2000);
     } catch (err){
       // eslint-disable-next-line no-console
       console.error('error ', err);
     }
   };
+
+  if (newses && newses.insert_sessions_one && newses.insert_sessions_one.id){
+    history.push('/planning-poker/' + newses.insert_sessions_one.id);
+  }
 
   return (
     <div>
