@@ -20,6 +20,12 @@ export const SetDiv = styled.div`
     margin-right: auto;
   }
 
+  &.revealing {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    animation-iteration-count: infinite;
+    transform: translate3d(0, 0, 0);
+  }
+
   &:hover, &.selected {
     cursor: pointer;
     border: unset;
@@ -57,6 +63,24 @@ export const SetDiv = styled.div`
 
   &.hvr-shutter-in-vertical:before {
     border-radius: var(--borderWidth);
+  }
+
+  @keyframes shake {
+    10%, 90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+
+    20%, 80% {
+      transform: translate3d(2px, 0, 0);
+    }
+
+    30%, 50%, 70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+
+    40%, 60% {
+      transform: translate3d(4px, 0, 0);
+    }
   }
 `;
 
@@ -96,8 +120,12 @@ export const SetDivRevealed = styled.div`
   margin-bottom: 30px;
   --borderWidth: 10px;
   position: relative;
-  background: #777;
+  background: #e1e1e1;
   border-radius: var(--borderWidth);
+
+  h1 {
+    text-align: center;
+  }
 `;
 
 export const Shortcut = styled.div`

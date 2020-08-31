@@ -62,6 +62,9 @@ mutation reveal($id: uuid! = "") {
     sessions_participants {
       value
       user_id
+      user {
+        name
+      }
     }
   }
 }
@@ -86,6 +89,14 @@ const PokerDetail = () => {
   const [selectedValueIdx, setSelectedValueIdx] = useState(-1);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isRevealing, setIsRevealing] = useState(false);
+  const [userincards, setUserincards] = useState([]);
+  const _userincards = [];
+  valueSets.forEach((v) => {
+    _userincards.push({value: v, userNames: []});
+  });
+  if (userincards.length === 0){
+    setUserincards(_userincards);
+  }
 
   let found = false;
   if (dpar && dpar.sessions_by_pk){
@@ -123,18 +134,26 @@ const PokerDetail = () => {
     }
     return false;
   };
-  console.log("dseluser ", dseluser);
 
   const onReveal = () => {
+    setIsRevealing(true);
     reveal({variables: {id}}).then(()=>{});
   };
 
   if (dataReveal && dataReveal.update_sessions_by_pk){
-    if (! isRevealing){
-      setIsRevealing(true);
+    if (! isRevealed){
       setTimeout(() => {
+        userincards.forEach(uic => {
+          dataReveal.update_sessions_by_pk.sessions_participants.forEach(uv => {
+            if (uv.value === uic.value){
+              uic.userNames.push(uv.user.name);
+            }
+          });
+        });
+
         setIsRevealed(true);
-      }, 2000);
+        setIsRevealing(false);
+      }, 1000);
     }
   }
 
@@ -181,7 +200,7 @@ const PokerDetail = () => {
             {valueSets.map((v, idx) =>{
               if (! isRevealed){
                 return (
-                  <SetDiv key={idx} className={(selectedValueIdx !== idx ? 'hvr-shutter-in-vertical' : 'selected')} onClick={()=> selectCard(idx)}>
+                  <SetDiv key={idx} className={(selectedValueIdx !== idx ? 'hvr-shutter-in-vertical' : 'selected') + (isRevealing ? ' revealing' : '')} onClick={()=> selectCard(idx)}>
                     <h1>
                       {v}
                     </h1>
@@ -194,6 +213,11 @@ const PokerDetail = () => {
                   <h1>
                     {v}
                   </h1>
+                  <ul>
+                    {_.find(userincards, {value: v}).userNames.map((uname, uidx) =>
+                      <li key={uidx}>{uname}</li>
+                    )}
+                  </ul>
                 </SetDivRevealed>
               );
             })}
