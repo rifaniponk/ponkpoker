@@ -1,8 +1,7 @@
 version: "3.8"
 services:
-  rehaex.devserver: 
+  rehaex.devserver:
     image: node:12.18
-    restart: always
     ports:
       - "4000:3000"
     volumes:
