@@ -222,7 +222,8 @@ const PokerDetail = () => {
                 );
               }
               return (
-                <SetDivRevealed key={idx} className={v === kingValue ? 'king' : ''}>
+                // eslint-disable-next-line no-nested-ternary
+                <SetDivRevealed key={idx} className={v === kingValue ? 'king' : (_.find(userincards, {value: v}).userNames.length ? 'yeah' : '')}>
                   <h1>
                     {v}
                   </h1>

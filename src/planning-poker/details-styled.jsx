@@ -128,6 +128,11 @@ export const SetDivRevealed = styled.div`
     background-image: linear-gradient(315deg, #fbb034 0%, #ffdd00 74%);
   }
 
+  &.yeah {
+    background-color: #eaf818;
+    background-image: linear-gradient(315deg, #f5ff63 0%, #fcffcc 74%);
+  }
+
   h1 {
     text-align: center;
   }
