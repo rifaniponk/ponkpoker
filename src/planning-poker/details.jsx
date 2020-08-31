@@ -123,7 +123,6 @@ const PokerDetail = () => {
     }
     return false;
   };
-  console.log("dseluser ", dseluser);
 
   const onReveal = () => {
     reveal({variables: {id}}).then(()=>{});
@@ -138,6 +137,40 @@ const PokerDetail = () => {
     }
   }
 
+  const moveDiv = (div, l, t) => {
+    div.style.width = div.offsetWidth + 'px';
+    const rect = div.getBoundingClientRect();
+    div.style.position = 'fixed';
+    div.style.top = rect.top + 'px';
+ console.log("rect.top ", div.style.top);
+    div.style.left = rect.left + 'px';
+
+    let left = Number(div.style.left.replace('px', ''));
+    let top = Number(div.style.top.replace('px', ''));
+    const travelTime = 500;
+    const inleft = (l - left) / travelTime;
+ console.log("inleft ", inleft);
+    const intop = (t - top) / travelTime;
+    let counter = 0;
+    const int = setInterval(() => {
+      counter++;
+      left += inleft;
+      top += intop;
+      div.style.left = left + 'px';
+ console.log("div.style.left ", div.style.left);
+      div.style.top = top + 'px';
+      if (counter >= travelTime){
+        clearInterval(int);
+      }
+    }, 2);
+  };
+
+  setTimeout(() => {
+    const u = document.getElementById('pargoogle-oauth2|111793750092326458249');
+
+    moveDiv(u, 500, 200);
+  }, 4000);
+
   return (
     <Row className="mt-4">
       <Col sm="6" md="4" lg="3">
@@ -146,7 +179,7 @@ const PokerDetail = () => {
         <ul style={{paddingLeft: 0}}>
           {lodu && <Spinner></Spinner>}
           {dpar && dpar.sessions_by_pk.sessions_participants.map(su =>
-            <ParticipantList key={su.user.id} style={{color: seedColor(su.user.id).toHex()}} className={isUserSelected(su.user.id) ? 'voted' : ''}>
+            <ParticipantList key={su.user.id} id={"par" + su.user.id} style={{color: seedColor(su.user.id).toHex()}} className={isUserSelected(su.user.id) ? 'voted' : ''}>
               <AvatarImg id={su.user.id} size={50}></AvatarImg>
               <b style={{marginLeft: '10px', fontSize: '20px'}}>{su.user.name}</b>
               {user && su.user.id === dpar.sessions_by_pk.user_id &&

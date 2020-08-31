@@ -65,6 +65,11 @@ export const ParticipantList = styled.div`
   margin-bottom: 10px;
   padding: 7px;
   transform: all 0.5s;
+  -webkit-transition: width 1s ease-in-out;
+  -moz-transition: width 1s ease-in-out;
+  -o-transition: width 1s ease-in-out;
+  transition: width 1s ease-in-out;
+  z-index: 9;
 
   &.voted {
     background: linear-gradient(60deg, #56D9D3, #94DCFB, #9494FB);
@@ -73,6 +78,10 @@ export const ParticipantList = styled.div`
     b {
       color: #fff;
     }
+  }
+
+  img {
+    height: 100%;
   }
 
   @keyframes animatedgradient {
@@ -96,7 +105,7 @@ export const SetDivRevealed = styled.div`
   margin-bottom: 30px;
   --borderWidth: 10px;
   position: relative;
-  background: #777;
+  background: #e1e1e1;
   border-radius: var(--borderWidth);
 `;
 
