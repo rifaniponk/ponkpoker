@@ -131,30 +131,6 @@ const PokerDetail = () => {
     setUserincards(_userincards);
   };
 
-  let found = false;
-  if (dpar && dpar.sessions_by_pk){
-    // check if user hasnt joined the session yet
-    dpar.sessions_by_pk.sessions_participants.forEach((su) => {
-      if (su.user.id === user.sub){
-        found = true;
-      }
-    });
-
-    if (valueSets !== dpar.sessions_by_pk.value_sets){
-      setValueSets(dpar.sessions_by_pk.value_sets);
-      updateUserInCards();
-    }
-  }
-
-  if (! lodu && ! isLoading && ! found){
-    try {
-      isp({variables: {session_id: id, user_id: user.sub}}).then(() => {});
-    } catch (err){
-      // eslint-disable-next-line no-console
-      console.log(err);
-    }
-  }
-
   const changeSet = (event) => {
     const newset = event.target.value.split(',').map(v => Number(v));
     updateSets({variables: {id, value_sets: newset}});
@@ -186,6 +162,34 @@ const PokerDetail = () => {
         setIsRevealed(true);
         setIsRevealing(false);
       }, 1000);
+    }
+  }
+
+  let found = false;
+  if (dpar && dpar.sessions_by_pk){
+    // check if user hasnt joined the session yet
+    dpar.sessions_by_pk.sessions_participants.forEach((su) => {
+      if (su.user.id === user.sub){
+        found = true;
+      }
+    });
+
+    if (valueSets !== dpar.sessions_by_pk.value_sets){
+      setValueSets(dpar.sessions_by_pk.value_sets);
+      updateUserInCards();
+    }
+
+    if (dpar.sessions_by_pk.is_finished && ! isRevealed && ! isRevealing){
+      onReveal();
+    }
+  }
+
+  if (! lodu && ! isLoading && ! found){
+    try {
+      isp({variables: {session_id: id, user_id: user.sub}}).then(() => {});
+    } catch (err){
+      // eslint-disable-next-line no-console
+      console.log(err);
     }
   }
 
