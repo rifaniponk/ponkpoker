@@ -123,8 +123,23 @@ export const SetDivRevealed = styled.div`
   background: #e1e1e1;
   border-radius: var(--borderWidth);
 
+  &.king {
+    background-color: #fbb034;
+    background-image: linear-gradient(315deg, #fbb034 0%, #ffdd00 74%);
+  }
+
   h1 {
     text-align: center;
+  }
+
+  ul {
+    padding-left:15px;
+    padding-right:15px;
+
+    li {
+      list-style: none;
+      font-weight: 700;
+    }
   }
 `;
 

@@ -89,6 +89,7 @@ const PokerDetail = () => {
   const [selectedValueIdx, setSelectedValueIdx] = useState(-1);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isRevealing, setIsRevealing] = useState(false);
+  const [kingValue, setKingValue] = useState(0);
   const [userincards, setUserincards] = useState([]);
   const _userincards = [];
   valueSets.forEach((v) => {
@@ -151,6 +152,18 @@ const PokerDetail = () => {
           });
         });
 
+        const guc = _.groupBy(userincards, (uc) => {
+          return uc.userNames.length;
+        });
+        for (let i = 50; i > 0; i--){
+          if (guc[i]){
+            if (guc[i].length === 1){
+              setKingValue(guc[i][0].value);
+            }
+            break;
+          }
+        }
+
         setIsRevealed(true);
         setIsRevealing(false);
       }, 1000);
@@ -209,7 +222,7 @@ const PokerDetail = () => {
                 );
               }
               return (
-                <SetDivRevealed key={idx}>
+                <SetDivRevealed key={idx} className={v === kingValue ? 'king' : ''}>
                   <h1>
                     {v}
                   </h1>
