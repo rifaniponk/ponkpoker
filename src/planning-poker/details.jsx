@@ -20,6 +20,7 @@ subscription session_details($id: uuid!) {
     user_id
     name
     is_finished
+    value_sets
   }
 }
 `;
@@ -70,6 +71,14 @@ mutation reveal($id: uuid! = "") {
 }
 `;
 
+const UPDATE_VALUE_SETS = gql`
+mutation updateSets($id: uuid! = "", $value_sets: jsonb = "") {
+  update_sessions_by_pk(pk_columns: {id: $id}, _set: {value_sets: $value_sets}) {
+    id
+  }
+}
+`;
+
 const PokerDetail = () => {
   const {id} = useParams();
   const {user, isLoading} = useAuth0();
@@ -85,19 +94,42 @@ const PokerDetail = () => {
   const [setValue] = useMutation(SET_VALUE);
   const [resetValues] = useMutation(RESET_VALUE);
   const [reveal, {data: dataReveal}] = useMutation(REVEAL);
+  const [updateSets, {loading: updateSetLoading}] = useMutation(UPDATE_VALUE_SETS);
   const [valueSets, setValueSets] = useState([1, 2, 3, 5, 8]);
   const [selectedValueIdx, setSelectedValueIdx] = useState(-1);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isRevealing, setIsRevealing] = useState(false);
   const [kingValue, setKingValue] = useState(0);
   const [userincards, setUserincards] = useState([]);
-  const _userincards = [];
-  valueSets.forEach((v) => {
-    _userincards.push({value: v, userNames: []});
-  });
-  if (userincards.length === 0){
+
+  const updateUserInCards = () => {
+    const _userincards = [];
+    valueSets.forEach((v) => {
+      _userincards.push({value: v, userNames: []});
+    });
+    if (dataReveal){
+      _userincards.forEach(uic => {
+        dataReveal.update_sessions_by_pk.sessions_participants.forEach(uv => {
+          if (uv.value === uic.value){
+            uic.userNames.push(uv.user.name);
+          }
+        });
+      });
+
+      const guc = _.groupBy(_userincards, (uc) => {
+        return uc.userNames.length;
+      });
+      for (let i = 50; i > 0; i--){
+        if (guc[i]){
+          if (guc[i].length === 1){
+            setKingValue(guc[i][0].value);
+          }
+          break;
+        }
+      }
+    }
     setUserincards(_userincards);
-  }
+  };
 
   let found = false;
   if (dpar && dpar.sessions_by_pk){
@@ -107,6 +139,11 @@ const PokerDetail = () => {
         found = true;
       }
     });
+
+    if (valueSets !== dpar.sessions_by_pk.value_sets){
+      setValueSets(dpar.sessions_by_pk.value_sets);
+      updateUserInCards();
+    }
   }
 
   if (! lodu && ! isLoading && ! found){
@@ -119,7 +156,8 @@ const PokerDetail = () => {
   }
 
   const changeSet = (event) => {
-    setValueSets(event.target.value.split(','));
+    const newset = event.target.value.split(',').map(v => Number(v));
+    updateSets({variables: {id, value_sets: newset}});
   };
 
   const selectCard = (idx) => {
@@ -144,26 +182,7 @@ const PokerDetail = () => {
   if (dataReveal && dataReveal.update_sessions_by_pk){
     if (! isRevealed){
       setTimeout(() => {
-        userincards.forEach(uic => {
-          dataReveal.update_sessions_by_pk.sessions_participants.forEach(uv => {
-            if (uv.value === uic.value){
-              uic.userNames.push(uv.user.name);
-            }
-          });
-        });
-
-        const guc = _.groupBy(userincards, (uc) => {
-          return uc.userNames.length;
-        });
-        for (let i = 50; i > 0; i--){
-          if (guc[i]){
-            if (guc[i].length === 1){
-              setKingValue(guc[i][0].value);
-            }
-            break;
-          }
-        }
-
+        updateUserInCards();
         setIsRevealed(true);
         setIsRevealing(false);
       }, 1000);
@@ -196,7 +215,7 @@ const PokerDetail = () => {
             <Col>
               <Form>
                 <FormGroup>
-                <Input type="select" name="select" id="exampleSelect" onChange={changeSet}>
+                <Input type="select" name="select" id="exampleSelect" onChange={changeSet} disabled={updateSetLoading} defaultValue={valueSets.join(',')}>
                   <option value={[1, 2, 3, 5, 8]}>1, 2, 3, 5, 8</option>
                   <option value={[4, 8, 12, 16, 24, 40]}>4h, 8h, 12h, 16h, 24h, 40h</option>
                 </Input>
@@ -223,12 +242,12 @@ const PokerDetail = () => {
               }
               return (
                 // eslint-disable-next-line no-nested-ternary
-                <SetDivRevealed key={idx} className={v === kingValue ? 'king' : (_.find(userincards, {value: v}).userNames.length ? 'yeah' : '')}>
+                <SetDivRevealed key={idx} className={v === kingValue ? 'king' : (_.find(userincards, {value: v})?.userNames.length ? 'yeah' : '')}>
                   <h1>
                     {v}
                   </h1>
                   <ul>
-                    {_.find(userincards, {value: v}).userNames.map((uname, uidx) =>
+                    {_.find(userincards, {value: v})?.userNames.map((uname, uidx) =>
                       <li key={uidx}>{uname}</li>
                     )}
                   </ul>
