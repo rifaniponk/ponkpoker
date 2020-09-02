@@ -21,6 +21,7 @@ subscription session_details($id: uuid!) {
     name
     is_finished
     value_sets
+    inc
   }
 }
 `;
@@ -42,11 +43,11 @@ mutation setValue($value: Int, $sid: uuid = "", $user_id: String = "") {
 `;
 
 const RESET_VALUE = gql`
-mutation resetValues($id: uuid! = "") {
+mutation resetValues($id: uuid! = "", $inc: Int) {
   update_sessions_participants(_set: {value: 0}, where: {session_id: {_eq: $id}}) {
     affected_rows
   }
-  update_sessions_by_pk(pk_columns: {id: $id}, _set: {is_finished: false}) {
+  update_sessions_by_pk(pk_columns: {id: $id}, _set: {is_finished: false, inc: $inc}) {
     id
   }
 }
@@ -70,6 +71,7 @@ mutation reveal($id: uuid! = "") {
         name
       }
     }
+    inc
   }
 }
 `;
@@ -95,7 +97,7 @@ const PokerDetail = () => {
   );
   const [isp] = useMutation(INSERT_SES_PAR);
   const [setValue] = useMutation(SET_VALUE);
-  const [resetValues] = useMutation(RESET_VALUE);
+  const [resetValues, {loading: resetLoading}] = useMutation(RESET_VALUE);
   const [reveal, {data: dataReveal}] = useMutation(REVEAL);
   const [updateSets, {loading: updateSetLoading}] = useMutation(UPDATE_VALUE_SETS);
   const [valueSets, setValueSets] = useState([1, 2, 3, 5, 8]);
@@ -139,8 +141,10 @@ const PokerDetail = () => {
     updateSets({variables: {id, value_sets: newset}});
   };
 
-  const selectCard = (idx) => {
-    setSelectedValueIdx(idx);
+  const selectCard = (idx, silentMode = false) => {
+    if (! silentMode){
+      setSelectedValueIdx(idx);
+    }
     setValue({variables: {sid: id, value: valueSets[idx], user_id: user.sub}}).then(()=>{});
   };
 
@@ -159,11 +163,11 @@ const PokerDetail = () => {
   };
 
   const onStartNew = () => {
-    resetValues({variables: {id}});
+    resetValues({variables: {id, inc: dpar.sessions_by_pk.inc + 1}});
   };
 
   if (dataReveal && dataReveal.update_sessions_by_pk){
-    if (! isRevealed){
+    if (! isRevealed && dpar.sessions_by_pk.inc === dataReveal.update_sessions_by_pk.inc){
       setTimeout(() => {
         updateUserInCards();
         setIsRevealed(true);
@@ -244,7 +248,7 @@ const PokerDetail = () => {
               <Button color="primary" className="float-right" onClick={onReveal} disabled={isRevealing}>Reveal!!!</Button>
             }
             {isRevealed &&
-              <Button color="success" className="float-right" onClick={onStartNew}>Start New One</Button>
+              <Button color="success" className="float-right" onClick={onStartNew} disabled={resetLoading}>Start New One</Button>
             }
             </Col>
           </Row>

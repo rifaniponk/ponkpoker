@@ -43,7 +43,7 @@ export const SetDiv = styled.div`
   }
 
   &.selected {
-    cursor: none;
+    cursor: not-allowed;
     color: #fff;
   }
 
