@@ -260,6 +260,7 @@ const PokerDetail = () => {
         <SessionName>Session: {dpar &&
           <EasyEdit
             type="text"
+            allowEdit={user && user.sub === dpar.sessions_by_pk.user_id}
             onSave={onUpdateSessionName}
             placeholder={dpar.sessions_by_pk.name}
             saveButtonLabel="Save"
