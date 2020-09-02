@@ -85,6 +85,14 @@ mutation updateSets($id: uuid! = "", $value_sets: jsonb = "") {
 }
 `;
 
+const UPDATE_SESSION_NAME = gql`
+mutation updateSessionName($id: uuid! = "", $name: String = "") {
+  update_sessions_by_pk(pk_columns: {id: $id}, _set: {name: $name}) {
+    id
+  }
+}
+`;
+
 const PokerDetail = () => {
   const {id} = useParams();
   const {user, isLoading} = useAuth0();
@@ -100,6 +108,7 @@ const PokerDetail = () => {
   const [setValue] = useMutation(SET_VALUE);
   const [resetValues, {loading: resetLoading}] = useMutation(RESET_VALUE);
   const [reveal, {data: dataReveal}] = useMutation(REVEAL);
+  const [updateSessionName] = useMutation(UPDATE_SESSION_NAME);
   const [updateSets, {loading: updateSetLoading}] = useMutation(UPDATE_VALUE_SETS);
   const [valueSets, setValueSets] = useState([1, 2, 3, 5, 8]);
   const [selectedValueIdx, setSelectedValueIdx] = useState(-1);
@@ -170,8 +179,8 @@ const PokerDetail = () => {
     resetValues({variables: {id, inc: dpar.sessions_by_pk.inc + 1}});
   };
 
-  const updateSessionName = () => {
-
+  const onUpdateSessionName = (name) => {
+    updateSessionName({variables: {id, name}});
   };
 
   window.addEventListener("keydown", (e) => {
@@ -251,7 +260,7 @@ const PokerDetail = () => {
         <SessionName>Session: {dpar &&
           <EasyEdit
             type="text"
-            onSave={updateSessionName}
+            onSave={onUpdateSessionName}
             placeholder={dpar.sessions_by_pk.name}
             saveButtonLabel="Save"
             cancelButtonLabel="Cancel"
