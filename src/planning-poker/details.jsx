@@ -106,6 +106,7 @@ const PokerDetail = () => {
   const [isRevealing, setIsRevealing] = useState(false);
   const [kingValue, setKingValue] = useState(0);
   const [userincards, setUserincards] = useState([]);
+  let kdtimeout = 0; // keydown timeout
 
   const updateUserInCards = () => {
     const _userincards = [];
@@ -165,6 +166,15 @@ const PokerDetail = () => {
   const onStartNew = () => {
     resetValues({variables: {id, inc: dpar.sessions_by_pk.inc + 1}});
   };
+
+  window.addEventListener("keydown", (e) => {
+    if (kdtimeout){
+      clearTimeout(kdtimeout);
+    }
+    kdtimeout = setTimeout(() => {
+      selectCard(e.key - 1, true);
+    }, 500);
+  });
 
   if (dataReveal && dataReveal.update_sessions_by_pk){
     if (! isRevealed && dpar.sessions_by_pk.inc === dataReveal.update_sessions_by_pk.inc){
