@@ -42,9 +42,12 @@ mutation setValue($value: Int, $sid: uuid = "", $user_id: String = "") {
 `;
 
 const RESET_VALUE = gql`
-mutation resetValues($sid: uuid = "") {
-  update_sessions_participants(_set: {value: 0}, where: {session_id: {_eq: $sid}}) {
+mutation resetValues($id: uuid! = "") {
+  update_sessions_participants(_set: {value: 0}, where: {session_id: {_eq: $id}}) {
     affected_rows
+  }
+  update_sessions_by_pk(pk_columns: {id: $id}, _set: {is_finished: false}) {
+    id
   }
 }
 `;
@@ -155,6 +158,10 @@ const PokerDetail = () => {
     reveal({variables: {id}}).then(()=>{});
   };
 
+  const onStartNew = () => {
+    resetValues({variables: {id}});
+  };
+
   if (dataReveal && dataReveal.update_sessions_by_pk){
     if (! isRevealed){
       setTimeout(() => {
@@ -181,6 +188,12 @@ const PokerDetail = () => {
 
     if (dpar.sessions_by_pk.is_finished && ! isRevealed && ! isRevealing){
       onReveal();
+    } else if (! dpar.sessions_by_pk.is_finished){
+      if (isRevealed){
+        setIsRevealed(false);
+        setKingValue(0);
+        setSelectedValueIdx(-1);
+      }
     }
   }
 
@@ -227,7 +240,12 @@ const PokerDetail = () => {
               </Form>
             </Col>
             <Col>
-              <Button color="success" className="float-right" onClick={onReveal}>Reveal!!!</Button>
+            {! isRevealed &&
+              <Button color="primary" className="float-right" onClick={onReveal} disabled={isRevealing}>Reveal!!!</Button>
+            }
+            {isRevealed &&
+              <Button color="success" className="float-right" onClick={onStartNew}>Start New One</Button>
+            }
             </Col>
           </Row>
         }
