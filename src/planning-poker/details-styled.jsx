@@ -160,3 +160,9 @@ export const Shortcut = styled.div`
   box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
   background-color: #f7f7f7;
 `;
+
+export const SessionName = styled.h4`
+  .easy-edit-wrapper {
+    display: inline-block;
+  }
+`;

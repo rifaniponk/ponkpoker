@@ -5,8 +5,9 @@ import {gql, useSubscription, useMutation} from '@apollo/client';
 import seedColor from 'seed-color';
 import AvatarImg from '../components/avatar';
 import {useAuth0} from "@auth0/auth0-react";
-import {SetDiv, ParticipantList, Shortcut, SetDivRevealed} from './details-styled';
+import {SetDiv, ParticipantList, Shortcut, SetDivRevealed, SessionName} from './details-styled';
 import _ from 'lodash';
+import EasyEdit from 'react-easy-edit';
 
 const GET_SESSION_PARTICIPANTS = gql`
 subscription session_details($id: uuid!) {
@@ -146,7 +147,9 @@ const PokerDetail = () => {
     if (! silentMode){
       setSelectedValueIdx(idx);
     }
-    setValue({variables: {sid: id, value: valueSets[idx], user_id: user.sub}}).then(()=>{});
+    if (valueSets[idx]){
+      setValue({variables: {sid: id, value: valueSets[idx], user_id: user.sub}}).then(()=>{});
+    }
   };
 
   const isUserSelected = (userId) => {
@@ -167,13 +170,19 @@ const PokerDetail = () => {
     resetValues({variables: {id, inc: dpar.sessions_by_pk.inc + 1}});
   };
 
+  const updateSessionName = () => {
+
+  };
+
   window.addEventListener("keydown", (e) => {
-    if (kdtimeout){
-      clearTimeout(kdtimeout);
+    if (e.path[2].className !== 'easy-edit-inline-wrapper'){
+      if (kdtimeout){
+        clearTimeout(kdtimeout);
+      }
+      kdtimeout = setTimeout(() => {
+        selectCard(e.key - 1, true);
+      }, 500);
     }
-    kdtimeout = setTimeout(() => {
-      selectCard(e.key - 1, true);
-    }, 500);
   });
 
   if (dataReveal && dataReveal.update_sessions_by_pk){
@@ -239,7 +248,17 @@ const PokerDetail = () => {
         </ul>
       </Col>
       <Col>
-        <h4>Session: {dpar && dpar.sessions_by_pk.name}</h4><hr />
+        <SessionName>Session: {dpar &&
+          <EasyEdit
+            type="text"
+            onSave={updateSessionName}
+            placeholder={dpar.sessions_by_pk.name}
+            saveButtonLabel="Save"
+            cancelButtonLabel="Cancel"
+            attributes={{name: "awesome-input", id: 1}}
+          />
+        }</SessionName><hr />
+
         {/* <Button color="light">New</Button> */}
         {user && dpar && user.sub === dpar.sessions_by_pk.user_id &&
           <Row>
