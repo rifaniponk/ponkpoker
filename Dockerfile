@@ -1,6 +1,15 @@
-FROM nginx:1
 
-# @TODO create a base image with health check enabled by default
-COPY config/nginx.conf /etc/nginx/conf.d/default.conf
+FROM node:12.18
 
-COPY build/ /usr/share/nginx/html
+WORKDIR /usr/src/app
+
+COPY . /usr/src/app
+COPY .env.staging .env
+RUN npm install --only=production --no-bin-links
+RUN npm run build
+
+ENV NODE_ENV production
+
+EXPOSE 80
+
+CMD ["npm", "run", "server"]
