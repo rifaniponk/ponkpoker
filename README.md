@@ -18,3 +18,9 @@ docker-compose up
 ```
 ./npm.sh npm run build:staging
 ```
+
+## Build docker image
+
+```
+docker build --pull --rm -t=rehaex:latest .
+```
