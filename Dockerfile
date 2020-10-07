@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 
 COPY . /usr/src/app
 COPY .env.staging .env
-RUN npm install --only=production --no-bin-links
+RUN npm install
 RUN npm run build
 
 ENV NODE_ENV production
