@@ -4,7 +4,7 @@ FROM node:12.18
 WORKDIR /usr/src/app
 
 COPY . /usr/src/app
-COPY .env.staging .env
+COPY .env.prod .env
 RUN npm install
 RUN npm run build
 
