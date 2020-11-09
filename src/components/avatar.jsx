@@ -1,11 +1,11 @@
 import React from 'react';
+import {AvatarGenerator} from 'random-avatar-generator';
 
 const AvatarImg = ({id, size}) => {
-  const src = `https://api.adorable.io/avatars/${size}/${id}`;
-  const bd = (15 / 100 * size) + 'px';
-  return (
-    <img src={src} alt="avatar" style={{borderRadius: bd}} />
-  );
+  const generator = new AvatarGenerator();
+  const src = generator.generateRandomAvatar(id);
+
+  return <img src={src} alt="avatar" style={{width: size + 'px'}} />;
 };
 
 export default AvatarImg;
