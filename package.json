@@ -22,7 +22,7 @@
     "react-easy-edit": "^1.10.0",
     "react-hook-form": "^6.5.3",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
+    "react-scripts": "5.0.1",
     "reactstrap": "^8.5.1",
     "seed-color": "^2.0.1",
     "styled-components": "^5.1.1",
